@@ -1,40 +1,29 @@
-# get-name
+# DeepSeek 智能起名助手
 
-一个基于 Vue 3 + TypeScript + Vite 的现代化前端项目模板。
+一个基于 Vue 3 + TypeScript + Vite 开发的智能起名应用，集成了 DeepSeek AI 接口，为用户提供专业的起名服务。
+
+## 功能特点
+
+- 💡 智能起名：根据用户需求提供个性化名字推荐
+- 📚 文化解析：详细解释名字的含义和文化内涵
+- 🎵 音律分析：确保名字音律和谐
+- 💬 实时对话：即时响应用户的起名需求
+- 📱 响应式设计：完美支持移动端和桌面端
 
 ## 技术栈
 
 - Vue 3 - 渐进式 JavaScript 框架
 - TypeScript - JavaScript 的超集
 - Vite - 下一代前端构建工具
-- Pinia - Vue 的状态管理库
-- Vue Router - Vue.js 的官方路由
-- UnoCSS - 即时原子化 CSS 引擎
+- DeepSeek API - AI 对话接口
 
-## 开发环境设置
+## 快速开始
 
-### 推荐的 IDE 配置
+### 环境要求
 
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (需要禁用 Vetur)
+- Node.js 16+
+- pnpm 8+
 
-### TypeScript 支持
+### 安装步骤
 
-本项目使用 `vue-tsc` 进行类型检查。在编辑器中,需要 [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) 来支持 `.vue` 文件的 TypeScript。
-
-## 项目设置
-
-```sh
-pnpm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-pnpm dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-pnpm build
-```
+1. 克隆项目
