@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, nextTick, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { DeepseekService } from '@/services/deepseek'
+import LanguageSwitch from '@/components/LanguageSwitch.vue'
+
+const { t } = useI18n()
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -55,6 +59,8 @@ watch(() => messages.value.length, scrollToBottom)
 
 <template>
   <div class="chat-container">
+    <LanguageSwitch />
+    
     <!-- 欢迎界面 -->
     <div v-if="messages.length === 0" class="welcome-screen">
       <div class="welcome-content">
@@ -62,18 +68,18 @@ watch(() => messages.value.length, scrollToBottom)
           <span class="avatar-text">AI</span>
         </div>
         <div class="welcome-text">
-          <h2>我是 DeepSeek 起名专家</h2>
-          <p>作为一名专业的起名顾问，我可以帮您：</p>
+          <h2>{{ t('welcome.title') }}</h2>
+          <p>{{ t('welcome.subtitle') }}</p>
           <ul class="feature-list">
-            <li>根据您的需求推荐个性化名字</li>
-            <li>解释名字的含义和文化内涵</li>
-            <li>分析名字的音律和寓意</li>
-            <li>提供多种风格的命名建议</li>
+            <li>{{ t('welcome.features.personalized') }}</li>
+            <li>{{ t('welcome.features.cultural') }}</li>
+            <li>{{ t('welcome.features.harmony') }}</li>
+            <li>{{ t('welcome.features.variety') }}</li>
           </ul>
-          <p class="start-hint">请告诉我您的起名需求，比如：</p>
+          <p class="start-hint">{{ t('welcome.hint') }}</p>
           <div class="example-prompts">
-            <p>"帮我给女儿取个温柔优雅的名字，姓王"</p>
-            <p>"想要一个带有'宇'字的男孩名字"</p>
+            <p>{{ t('welcome.examples.girl') }}</p>
+            <p>{{ t('welcome.examples.boy') }}</p>
           </div>
         </div>
       </div>
@@ -117,31 +123,23 @@ watch(() => messages.value.length, scrollToBottom)
     <!-- 输入区域 -->
     <div class="input-section">
       <div class="input-container">
-        <textarea
-          v-model="inputMessage"
-          placeholder="给 DeepSeek 发送消息"
-          @keydown.enter.prevent="handleSubmit"
-          :disabled="loading"
-          rows="1"
-        />
-        <div class="input-tools">
-          <div class="tool-buttons">
-            <button class="tool-btn" :disabled="loading">
-              <span>深度思考</span>
-            </button>
-            <button class="tool-btn" :disabled="loading">
-              <span>联网搜索</span>
-            </button>
-          </div>
+        <div class="input-wrapper">
+          <textarea
+            v-model="inputMessage"
+            :placeholder="t('input.placeholder')"
+            @keydown.enter.prevent="handleSubmit"
+            :disabled="loading"
+            rows="1"
+          />
           <button 
             class="send-btn"
             @click="handleSubmit"
             :disabled="loading || !inputMessage.trim()"
           >
-            <span class="send-icon">{{ loading ? '...' : '↑' }}</span>
+            <span class="send-icon">{{ loading ? '...' : '发送' }}</span>
           </button>
         </div>
-        <div class="disclaimer">内容由 AI 生成，请仔细甄别</div>
+        <div class="disclaimer">{{ t('messages.disclaimer') }}</div>
       </div>
     </div>
   </div>
@@ -238,16 +236,20 @@ watch(() => messages.value.length, scrollToBottom)
 }
 
 .input-section {
-  width: 100%;
-  padding: 0.75rem;
+  padding: 1rem;
   background-color: #1a1a1a;
   border-top: 1px solid #2f2f2f;
 }
 
 .input-container {
-  width: 100%;
   max-width: 800px;
   margin: 0 auto;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 textarea {
@@ -255,65 +257,37 @@ textarea {
   background-color: #2f2f2f;
   border: 1px solid #3f3f3f;
   border-radius: 0.5rem;
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
+  padding-right: 4rem; /* 为发送按钮留出空间 */
   color: #fff;
   font-size: 0.875rem;
   resize: none;
   outline: none;
-  margin-bottom: 0.5rem;
-  min-height: 44px;
+  min-height: 60px; /* 增加最小高度 */
   max-height: 200px;
   overflow-y: auto;
+  line-height: 1.5;
 }
 
 textarea:focus {
   border-color: #4f4f4f;
 }
 
-.input-tools {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.tool-buttons {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.tool-btn {
-  background-color: #2f2f2f;
-  border: none;
-  color: #999;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-}
-
-.tool-btn:hover {
-  background-color: #3f3f3f;
-}
-
 .send-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%; /* 垂直居中 */
+  transform: translateY(-50%); /* 垂直居中 */
   background-color: #2f2f2f;
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 3rem;
+  height: 40px; /* 增加按钮高度 */
   border-radius: 0.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   color: #fff;
-  flex-shrink: 0;
 }
 
 .send-btn:disabled {
@@ -329,55 +303,23 @@ textarea:focus {
   text-align: center;
   color: #666;
   font-size: 0.75rem;
+  margin-top: 0.5rem;
 }
 
 /* 移动端适配 */
 @media (max-width: 768px) {
-  .chat-container {
-    height: 100vh;
-    /* 修复移动端 100vh 问题 */
-    height: -webkit-fill-available;
-  }
-
-  .welcome-content {
-    padding: 0 0.5rem;
-  }
-
-  .messages {
-    padding: 0.5rem;
-  }
-
-  .message-content {
-    max-width: 95%;
-    font-size: 0.875rem;
-  }
-
   .input-section {
-    padding: 0.5rem;
-  }
-
-  .input-container {
-    padding: 0;
+    padding: 0.75rem;
   }
 
   textarea {
-    padding: 0.5rem;
+    min-height: 56px; /* 移动端稍微调整一下高度 */
     font-size: 1rem;
-  }
-
-  .tool-buttons {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .tool-btn {
-    flex: 1;
-    justify-content: center;
+    padding: 0.75rem 3.5rem 0.75rem 0.75rem;
   }
 
   .send-btn {
-    width: 100%;
-    margin-top: 0.5rem;
+    right: 0.25rem;
   }
 }
 
